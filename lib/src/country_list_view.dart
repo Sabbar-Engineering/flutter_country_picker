@@ -39,6 +39,12 @@ class CountryListView extends StatefulWidget {
   /// An optional argument for showing "World Wide" option at the beginning of the list
   final bool showWorldWide;
 
+  /// An optional argument to disallow pop in case of usage in scaffold
+  final bool shouldPop;
+
+  final  String? placeHolder;
+
+
   const CountryListView({
     Key? key,
     required this.onSelect,
@@ -46,13 +52,16 @@ class CountryListView extends StatefulWidget {
     this.favorite,
     this.countryFilter,
     this.showPhoneCode = false,
+    this.shouldPop = true,
     this.countryListTheme,
+    this.placeHolder,
     this.searchAutofocus = false,
     this.showWorldWide = false,
-  })  : assert(
-          exclude == null || countryFilter == null,
-          'Cannot provide both exclude and countryFilter',
-        ),
+  })
+      : assert(
+  exclude == null || countryFilter == null,
+  'Cannot provide both exclude and countryFilter',
+  ),
         super(key: key);
 
   @override
@@ -67,6 +76,7 @@ class _CountryListViewState extends State<CountryListView> {
   List<Country>? _favoriteList;
   late TextEditingController _searchController;
   late bool _searchAutofocus;
+  Country? selectedCountry;
 
   @override
   void initState() {
@@ -90,13 +100,13 @@ class _CountryListViewState extends State<CountryListView> {
 
     if (widget.exclude != null) {
       _countryList.removeWhere(
-        (element) => widget.exclude!.contains(element.countryCode),
+            (element) => widget.exclude!.contains(element.countryCode),
       );
     }
 
     if (widget.countryFilter != null) {
       _countryList.removeWhere(
-        (element) => !widget.countryFilter!.contains(element.countryCode),
+            (element) => !widget.countryFilter!.contains(element.countryCode),
       );
     }
 
@@ -111,22 +121,29 @@ class _CountryListViewState extends State<CountryListView> {
 
   @override
   Widget build(BuildContext context) {
-    final String searchLabel =
-        CountryLocalizations.of(context)?.countryName(countryCode: 'search') ??
-            'Search';
+    String? searchLabel;
+    if(widget.placeHolder ==null) {
+      searchLabel =
+          CountryLocalizations.of(context)?.countryName(
+              countryCode: 'search') ??
+              'Search';
+    }else{
+      searchLabel = widget.placeHolder;
+    }
 
+    print(widget.placeHolder);
     return Column(
       children: <Widget>[
         const SizedBox(height: 12),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
           child: TextField(
             autofocus: _searchAutofocus,
             controller: _searchController,
             decoration: widget.countryListTheme?.inputDecoration ??
                 InputDecoration(
-                  labelText: searchLabel,
-                  hintText: searchLabel,
+                  labelText: widget.placeHolder ?? searchLabel,
+                  hintText: widget.placeHolder ?? searchLabel,
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -144,10 +161,10 @@ class _CountryListViewState extends State<CountryListView> {
                 ..._favoriteList!
                     .map<Widget>((currency) => _listRow(currency))
                     .toList(),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Divider(thickness: 1),
-                ),
+                // const Padding(
+                //   padding: EdgeInsets.symmetric(horizontal: 20.0),
+                //   child: Divider(thickness: 1),
+                // ),
               ],
               ..._filteredList
                   .map<Widget>((country) => _listRow(country))
@@ -165,52 +182,79 @@ class _CountryListViewState extends State<CountryListView> {
 
     final bool isRtl = Directionality.of(context) == TextDirection.rtl;
 
+    final Color _radioColor = (country == selectedCountry)
+        ? Color.fromRGBO(250, 83, 46, 1)
+        : Color.fromRGBO(136, 141, 160, 1);
+
+    final Widget _radio = Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Icon(
+          (country == selectedCountry)
+              ? Icons.radio_button_checked
+              : Icons.radio_button_off,
+          color: _radioColor,
+        ));
     return Material(
       // Add Material Widget with transparent color
       // so the ripple effect of InkWell will show on tap
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          country.nameLocalized = CountryLocalizations.of(context)
-              ?.countryName(countryCode: country.countryCode)
-              ?.replaceAll(RegExp(r"\s+"), " ");
-          widget.onSelect(country);
-          Navigator.pop(context);
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-          child: Row(
-            children: <Widget>[
-              Row(
-                children: [
-                  const SizedBox(width: 20),
-                  _flagWidget(country),
-                  if (widget.showPhoneCode && !country.iswWorldWide) ...[
-                    const SizedBox(width: 15),
-                    SizedBox(
-                      width: 45,
+          onTap: () {
+            country.nameLocalized = CountryLocalizations.of(context)
+                ?.countryName(countryCode: country.countryCode)
+                ?.replaceAll(RegExp(r"\s+"), " ");
+            widget.onSelect(country);
+            if (widget.shouldPop) {
+              Navigator.pop(context);
+            } else {
+              setState(() {
+                selectedCountry = country;
+              });
+            }
+          },
+          child:
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                child: Row(
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        _flagWidget(country),
+                        if (widget.showPhoneCode && !country.iswWorldWide) ...[
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            width: 45,
+                            child: Text(
+                              '${isRtl ? '' : '+'}${country.phoneCode}${isRtl
+                                  ? '+'
+                                  : ''}',
+                              style: _textStyle,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                        ] else
+                          const SizedBox(width: 4),
+                      ],
+                    ),
+                    Expanded(
                       child: Text(
-                        '${isRtl ? '' : '+'}${country.phoneCode}${isRtl ? '+' : ''}',
+                        CountryLocalizations.of(context)
+                            ?.countryName(countryCode: country.countryCode)
+                            ?.replaceAll(RegExp(r"\s+"), " ") ??
+                            country.name,
                         style: _textStyle,
                       ),
                     ),
-                    const SizedBox(width: 5),
-                  ] else
-                    const SizedBox(width: 15),
-                ],
-              ),
-              Expanded(
-                child: Text(
-                  CountryLocalizations.of(context)
-                          ?.countryName(countryCode: country.countryCode)
-                          ?.replaceAll(RegExp(r"\s+"), " ") ??
-                      country.name,
-                  style: _textStyle,
+                    _radio
+                  ],
                 ),
-              )
+              ),
+              const Divider(thickness: 1),
             ],
-          ),
-        ),
+          )
+
       ),
     );
   }
@@ -241,7 +285,7 @@ class _CountryListViewState extends State<CountryListView> {
   void _filterSearchResults(String query) {
     List<Country> _searchResult = <Country>[];
     final CountryLocalizations? localizations =
-        CountryLocalizations.of(context);
+    CountryLocalizations.of(context);
 
     if (query.isEmpty) {
       _searchResult.addAll(_countryList);

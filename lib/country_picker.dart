@@ -53,8 +53,8 @@ void showCountryPicker({
   bool showWorldWide = false,
 }) {
   assert(
-    exclude == null || countryFilter == null,
-    'Cannot provide both exclude and countryFilter',
+  exclude == null || countryFilter == null,
+  'Cannot provide both exclude and countryFilter',
   );
   showCountryListBottomSheet(
     context: context,
@@ -68,4 +68,36 @@ void showCountryPicker({
     searchAutofocus: searchAutofocus,
     showWorldWide: showWorldWide,
   );
+}
+
+Widget countryPickerList({
+  required BuildContext context,
+  required ValueChanged<Country> onSelect,
+  VoidCallback? onClosed,
+  List<String>? favorite,
+  List<String>? exclude,
+  List<String>? countryFilter,
+  bool showPhoneCode = false,
+  CountryListThemeData? countryListTheme,
+  bool searchAutofocus = false,
+  bool showWorldWide = false,
+  String? placeHolder,
+}) {
+  assert(
+  exclude == null || countryFilter == null,
+  'Cannot provide both exclude and countryFilter',
+  );
+  return
+    countryList(
+      onSelect: onSelect,
+      onClosed: onClosed,
+      exclude: exclude,
+      favorite: favorite,
+      placeHolder: placeHolder,
+      countryFilter: countryFilter,
+      showPhoneCode: showPhoneCode,
+      countryListTheme: countryListTheme,
+      searchAutofocus: searchAutofocus,
+      showWorldWide: showWorldWide,
+    );
 }
