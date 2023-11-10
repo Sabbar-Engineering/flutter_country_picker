@@ -42,14 +42,15 @@ class CountryListView extends StatefulWidget {
   /// An optional argument to disallow pop in case of usage in scaffold
   final bool shouldPop;
 
-  final  String? placeHolder;
-
+  final String? placeHolder;
+  final String? selectedCountry;
 
   const CountryListView({
     Key? key,
     required this.onSelect,
     this.exclude,
     this.favorite,
+    this.selectedCountry,
     this.countryFilter,
     this.showPhoneCode = false,
     this.shouldPop = true,
@@ -81,10 +82,17 @@ class _CountryListViewState extends State<CountryListView> {
   @override
   void initState() {
     super.initState();
+
+
     _searchController = TextEditingController();
 
     _countryList = _countryService.getAll();
 
+    if(widget.selectedCountry!=null) {
+      selectedCountry = _countryList.firstWhere((element) =>
+      element.countryCode.toLowerCase() ==
+          widget.selectedCountry!.toLowerCase());
+    }
     _countryList =
         countryCodes.map((country) => Country.from(json: country)).toList();
 

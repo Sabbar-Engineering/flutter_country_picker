@@ -81,6 +81,7 @@ Widget countryPickerList({
   CountryListThemeData? countryListTheme,
   bool searchAutofocus = false,
   bool showWorldWide = false,
+  String? selectedCountry,
   String? placeHolder,
 }) {
   assert(
@@ -99,5 +100,6 @@ Widget countryPickerList({
       countryListTheme: countryListTheme,
       searchAutofocus: searchAutofocus,
       showWorldWide: showWorldWide,
+      selectedCountry: selectedCountry,
     );
 }

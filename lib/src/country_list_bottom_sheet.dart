@@ -48,6 +48,7 @@ Widget countryList({
   bool searchAutofocus = false,
   bool showWorldWide = false,
   String? placeHolder,
+  String? selectedCountry,
 }) {
   return _builderListView(
     onSelect,
@@ -58,6 +59,7 @@ Widget countryList({
     countryListTheme,
     searchAutofocus,
     showWorldWide,
+    selectedCountry,
     placeHolder,
   );
 }
@@ -124,17 +126,7 @@ Widget _builder(BuildContext context,
 }
 
 
-
-
-
-
-
-
-
-
-
-Widget _builderListView(
-    ValueChanged<Country> onSelect,
+Widget _builderListView(ValueChanged<Country> onSelect,
     List<String>? favorite,
     List<String>? exclude,
     List<String>? countryFilter,
@@ -142,11 +134,12 @@ Widget _builderListView(
     CountryListThemeData? countryListTheme,
     bool searchAutofocus,
     bool showWorldWide,
-    String? placeHolder,
-    ) {
+    String? selectedCountry,
+    String? placeHolder,) {
   return countryListView(
     onSelect: onSelect,
     exclude: exclude,
+    selectedCountry: selectedCountry,
     favorite: favorite,
     countryFilter: countryFilter,
     showPhoneCode: showPhoneCode,
@@ -154,9 +147,8 @@ Widget _builderListView(
     searchAutofocus: searchAutofocus,
     showWorldWide: showWorldWide,
     shouldPop: false,
-    placeHolder:placeHolder,
+    placeHolder: placeHolder,
   );
-
 }
 
 
@@ -170,6 +162,7 @@ Widget countryListView({
   bool searchAutofocus = false,
   bool showWorldWide = false,
   bool shouldPop = true,
+  String? selectedCountry,
   String? placeHolder,
 }) {
   return CountryListView(
@@ -183,6 +176,7 @@ Widget countryListView({
     searchAutofocus: searchAutofocus,
     showWorldWide: showWorldWide,
     placeHolder: placeHolder,
+    selectedCountry: selectedCountry,
   );
 }
 
