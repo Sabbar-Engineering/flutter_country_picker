@@ -88,7 +88,7 @@ class _CountryListViewState extends State<CountryListView> {
 
     _countryList = _countryService.getAll();
 
-    if(widget.selectedCountry!=null) {
+    if (widget.selectedCountry != null) {
       selectedCountry = _countryList.firstWhere((element) =>
       element.countryCode.toLowerCase() ==
           widget.selectedCountry!.toLowerCase());
@@ -130,16 +130,14 @@ class _CountryListViewState extends State<CountryListView> {
   @override
   Widget build(BuildContext context) {
     String? searchLabel;
-    if(widget.placeHolder ==null) {
+    if (widget.placeHolder == null) {
       searchLabel =
           CountryLocalizations.of(context)?.countryName(
               countryCode: 'search') ??
               'Search';
-    }else{
+    } else {
       searchLabel = widget.placeHolder;
     }
-
-    print(widget.placeHolder);
     return Column(
       children: <Widget>[
         const SizedBox(height: 12),
@@ -148,17 +146,43 @@ class _CountryListViewState extends State<CountryListView> {
           child: TextField(
             autofocus: _searchAutofocus,
             controller: _searchController,
-            decoration: widget.countryListTheme?.inputDecoration ??
-                InputDecoration(
-                  labelText: widget.placeHolder ?? searchLabel,
-                  hintText: widget.placeHolder ?? searchLabel,
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: const Color(0xFF8C98A8).withOpacity(0.2),
-                    ),
-                  ),
+            decoration: widget.countryListTheme?.inputDecoration == null ?
+            InputDecoration(
+              labelText: widget.placeHolder ?? searchLabel,
+              hintText: widget.placeHolder ?? searchLabel,
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: const Color(0xFF8C98A8).withOpacity(0.2),
                 ),
+              ),
+            ) : widget.countryListTheme!.inputDecoration!.copyWith(
+              suffixIcon:
+              _searchController.text.isNotEmpty
+                  ? GestureDetector(
+                onTap: () {
+                  _searchController.text = "";
+                  setState(() {});
+                  _filterSearchResults(_searchController.text);
+                }, child: Container(
+                padding: EdgeInsets.all(12),
+                child: Container(
+                    height: 16,
+                    width: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      size: 16,
+                      color: Colors.white,
+                    )),
+              ),
+              )
+                  : null,
+
+            ),
             onChanged: _filterSearchResults,
           ),
         ),
