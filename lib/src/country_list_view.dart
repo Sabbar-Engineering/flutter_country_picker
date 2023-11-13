@@ -143,33 +143,36 @@ class _CountryListViewState extends State<CountryListView> {
           child: TextField(
             autofocus: _searchAutofocus,
             controller: _searchController,
-            decoration: widget.countryListTheme?.inputDecoration == null
-                ? InputDecoration(
-                    labelText: widget.placeHolder ?? searchLabel,
-                    hintText: widget.placeHolder ?? searchLabel,
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: const Color(0xFF8C98A8).withOpacity(0.2),
-                      ),
-                    ),
-                  )
-                : widget.countryListTheme!.inputDecoration!.copyWith(
-                    suffixIcon: _searchController.text.isEmpty
-                        ? null
-                        : GestureDetector(
-                            onTap: () {
-                              _searchController.text = "";
-                              // setState(() {});
-                              _filterSearchResults(_searchController.text);
-                              // print(_searchController.text.isEmpty);
-                            },
-                            child: _searchController.text.isEmpty
-                                ? null
-                                : widget.countryListTheme?.inputDecoration
-                                    ?.suffixIcon,
-                          ),
-                  ),
+            decoration:
+            InputDecoration(
+              focusedBorder: widget.countryListTheme?.inputDecoration
+                  ?.focusedBorder,
+              border: widget.countryListTheme?.inputDecoration?.border,
+              errorBorder: widget.countryListTheme?.inputDecoration
+                  ?.errorBorder,
+              enabledBorder: widget.countryListTheme?.inputDecoration
+                  ?.enabledBorder,
+              fillColor: widget.countryListTheme?.inputDecoration?.fillColor,
+              filled: widget.countryListTheme?.inputDecoration?.filled,
+              contentPadding: widget.countryListTheme?.inputDecoration
+                  ?.contentPadding,
+              hintText: widget.countryListTheme?.inputDecoration?.hintText,
+              hintStyle: widget.countryListTheme?.inputDecoration?.hintStyle,
+              suffixIcon: _searchController.text.isEmpty
+                  ? null
+                  : GestureDetector(
+                onTap: () {
+                  _searchController.clear();
+                  _filterSearchResults(_searchController.text);
+                },
+                child: _searchController.text.isEmpty
+                    ? null
+                    : widget.countryListTheme?.inputDecoration
+                    ?.suffixIcon,
+              ),
+              prefixIcon: widget.countryListTheme?.inputDecoration?.prefixIcon,
+            ),
+
             onChanged: _filterSearchResults,
           ),
         ),
