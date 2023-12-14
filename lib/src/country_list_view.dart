@@ -1,5 +1,6 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:country_picker/src/extensions.dart';
+import 'package:country_picker/src/res/strings/ar.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 
@@ -302,7 +303,7 @@ class _CountryListViewState extends State<CountryListView> {
     final CountryLocalizations? localizations =
         CountryLocalizations.of(context);
 
-    if (query.isEmpty) {
+    if (query.trim().isEmpty) {
       _searchResult.addAll(_countryList);
     } else {
       _searchResult = extractTop<Country>(
@@ -311,14 +312,10 @@ class _CountryListViewState extends State<CountryListView> {
           ..._countryList,
         ],
         limit: 10,
-        cutoff: 50,
+        cutoff: 60,
         getter: (e) =>
-            "${e.name}, ${e.countryCode}, ${localizations?.countryName(countryCode: e.countryCode)?.toLowerCase()}",
+            "${e.name} ${e.countryCode} ${localizations?.countryName(countryCode: e.countryCode)?.toLowerCase()} ${ar[e.countryCode]}",
       ).map((e) => e.choice).toList();
-
-      // _searchResult = _countryList
-      //     .where((c) => c.startsWith(query, localizations))
-      //     .toList();
     }
 
     setState(() => _filteredList = _searchResult);
