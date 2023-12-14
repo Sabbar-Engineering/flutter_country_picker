@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   collection: ^1.15.0
-
+  fuzzywuzzy: ^1.1.6
 flutter:
   assets:
     - lib/src/res/assets/

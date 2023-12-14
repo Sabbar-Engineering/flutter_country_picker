@@ -1,8 +1,8 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:country_picker/src/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 
-import 'country_service.dart';
 import 'res/country_codes.dart';
 import 'utils.dart';
 
@@ -143,36 +143,34 @@ class _CountryListViewState extends State<CountryListView> {
           child: TextField(
             autofocus: _searchAutofocus,
             controller: _searchController,
-            decoration:
-            InputDecoration(
-              focusedBorder: widget.countryListTheme?.inputDecoration
-                  ?.focusedBorder,
+            decoration: InputDecoration(
+              focusedBorder:
+                  widget.countryListTheme?.inputDecoration?.focusedBorder,
               border: widget.countryListTheme?.inputDecoration?.border,
-              errorBorder: widget.countryListTheme?.inputDecoration
-                  ?.errorBorder,
-              enabledBorder: widget.countryListTheme?.inputDecoration
-                  ?.enabledBorder,
+              errorBorder:
+                  widget.countryListTheme?.inputDecoration?.errorBorder,
+              enabledBorder:
+                  widget.countryListTheme?.inputDecoration?.enabledBorder,
               fillColor: widget.countryListTheme?.inputDecoration?.fillColor,
               filled: widget.countryListTheme?.inputDecoration?.filled,
-              contentPadding: widget.countryListTheme?.inputDecoration
-                  ?.contentPadding,
+              contentPadding:
+                  widget.countryListTheme?.inputDecoration?.contentPadding,
               hintText: widget.countryListTheme?.inputDecoration?.hintText,
               hintStyle: widget.countryListTheme?.inputDecoration?.hintStyle,
               suffixIcon: _searchController.text.isEmpty
                   ? null
                   : GestureDetector(
-                onTap: () {
-                  _searchController.clear();
-                  _filterSearchResults(_searchController.text);
-                },
-                child: _searchController.text.isEmpty
-                    ? null
-                    : widget.countryListTheme?.inputDecoration
-                    ?.suffixIcon,
-              ),
+                      onTap: () {
+                        _searchController.clear();
+                        _filterSearchResults(_searchController.text);
+                      },
+                      child: _searchController.text.isEmpty
+                          ? null
+                          : widget
+                              .countryListTheme?.inputDecoration?.suffixIcon,
+                    ),
               prefixIcon: widget.countryListTheme?.inputDecoration?.prefixIcon,
             ),
-
             onChanged: _filterSearchResults,
           ),
         ),
@@ -307,9 +305,20 @@ class _CountryListViewState extends State<CountryListView> {
     if (query.isEmpty) {
       _searchResult.addAll(_countryList);
     } else {
-      _searchResult = _countryList
-          .where((c) => c.startsWith(query, localizations))
-          .toList();
+      _searchResult = extractTop<Country>(
+        query: query,
+        choices: [
+          ..._countryList,
+        ],
+        limit: 10,
+        cutoff: 50,
+        getter: (e) =>
+            "${e.name}, ${e.countryCode}, ${localizations?.countryName(countryCode: e.countryCode)?.toLowerCase()}",
+      ).map((e) => e.choice).toList();
+
+      // _searchResult = _countryList
+      //     .where((c) => c.startsWith(query, localizations))
+      //     .toList();
     }
 
     setState(() => _filteredList = _searchResult);
