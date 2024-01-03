@@ -142,6 +142,8 @@ class _CountryListViewState extends State<CountryListView> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: TextField(
+            enableSuggestions: false,
+            autocorrect: false,
             autofocus: _searchAutofocus,
             controller: _searchController,
             decoration: InputDecoration(
