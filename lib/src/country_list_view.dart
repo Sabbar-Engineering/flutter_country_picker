@@ -174,7 +174,7 @@ class _CountryListViewState extends State<CountryListView> {
             ),
             onChanged: _filterSearchResults,
           ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Expanded(
           child: ListView(
             children: [
