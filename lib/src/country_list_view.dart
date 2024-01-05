@@ -138,10 +138,8 @@ class _CountryListViewState extends State<CountryListView> {
     }
     return Column(
       children: <Widget>[
-        const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: TextField(
+        // const SizedBox(height: 12),
+           TextField(
             enableSuggestions: false,
             autocorrect: false,
             autofocus: _searchAutofocus,
@@ -176,7 +174,7 @@ class _CountryListViewState extends State<CountryListView> {
             ),
             onChanged: _filterSearchResults,
           ),
-        ),
+        const SizedBox(height: 4),
         Expanded(
           child: ListView(
             children: [
@@ -244,6 +242,7 @@ class _CountryListViewState extends State<CountryListView> {
                     Row(
                       children: [
                         _flagWidget(country),
+                        const SizedBox(width:4),
                         if (widget.showPhoneCode && !country.iswWorldWide) ...[
                           const SizedBox(width: 8),
                           SizedBox(
